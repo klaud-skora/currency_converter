@@ -30,15 +30,9 @@ class PageTapped extends BottomNavigationEvent {
 }
 
 class GetData extends BottomNavigationEvent {
-  final int index;
-
-  GetData({@required this.index}) : super([index]);
 
  @override
   List<Object> get props => [];
-
-  @override
-  String toString() => 'PageTapped: $index';
 }
 
 @immutable
@@ -100,29 +94,28 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       yield PageLoading();
 
       if (this.currentIndex == 0) {
-        yield FirstPageLoaded();
+        yield FirstPageLoaded(); // status: none
       }
       if (this.currentIndex == 1) {
-        yield SecondPageLoaded();
+        yield SecondPageLoaded(); // status: none
       }
     }
     if ( event is GetData ) {
-      List data = await _getCurrencyData();
-      print(data);
-      if (this.currentIndex == 0 ) yield FirstPageLoaded();
-      if( this.currentIndex == 1  ) yield SecondPageLoaded();
+      List fetchedData = await _getCurrencyData();
+      List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
+      print('give me data');
+      print(dataToDisplay);
+      if (this.currentIndex == 0 ) yield FirstPageLoaded(); // data + status
+      if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
     }
   }
 
   Future<List> _getCurrencyData() async {
-    List data = currencyRepository.data;
-    if (data == null) {
+    List data;
+
       await currencyRepository.fetchData();
-      print('oooo');
-      
       data = currencyRepository.data;
-      print(data);
-    }
+
     return data;
   }
 }

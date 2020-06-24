@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/nav_bar_bloc.dart';
 
 class FirstPage extends StatelessWidget {
 
@@ -21,6 +24,13 @@ class FirstPage extends StatelessWidget {
                 ),
                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                 child: Text('Fill neded data to convert', style: TextStyle(fontSize: 22.0), ),
+              ),
+              RaisedButton(
+                onPressed: () => BlocProvider.of<BottomNavigationBloc>(context).add(GetData()),
+                child: Text('Get Data'),
+              ),
+              Card(
+                child: Text( '${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data}' )
               ),
             ],
           ),

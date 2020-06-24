@@ -1,48 +1,77 @@
-import 'package:equatable/equatable.dart';
+// FOER 1 EUR
 
-enum CurrencyShortcut {
-  pln,
-  dolar,
+enum Currency {
+  CAD,
+  HKD,
+  ISK,
+  PHP,
+  DKK,
+  HUF,
+  CZK,
+  AUD,
+  RON,
+  SEK,
+  IDR,
+  INR,
+  BRL,
+  RUB,  
+  HRK,
+  JPY,
+  THB,
+  CHF,
+  SGD,
+  PLN,
+  BGN,
+  TRY,
+  CNY,
+  NOK,
+  NZD,
+  ZAR,
+  USD,
+  MXN,
+  ILS,
+  GBP,
+  KRW,
+  MYR,
 }
 
-class Currency extends Equatable {
-  final CurrencyShortcut shortcut;
-  final String base;
-  final Object rates;
+extension CurrencyExtension on Currency {
 
-  const Currency({
-    this.shortcut,
-    this.base,
-    this.rates,
-  });
-
-  @override
-  List<Object> get props => [
-    shortcut,
-    base,
-    rates,
-  ];
-
-  static Currency fromJson(dynamic json) {
-    final consolidatedCurrency = json['consolidated_currency'][0];
-    return Currency(
-      shortcut: _mapStringToCurrencyShortcut(
-          consolidatedCurrency['base']),
-      rates: consolidatedCurrency['rates'] as Object,
-    );
-  }
-
-  static CurrencyShortcut _mapStringToCurrencyShortcut(String input) {
-    CurrencyShortcut state;
-    switch(input) {
-      case 'PLN':
-        state = CurrencyShortcut.pln;
-        break;
-      case 'US':
-        state = CurrencyShortcut.dolar;
-        break;
-    }
-    return state;
-  }
+  static final shortcuts = {
+    Currency.CAD: 'CAD',
+    Currency.HKD: 'HKD',
+    Currency.ISK: 'ISK',
+    Currency.PHP: 'PHP',
+    Currency.DKK: 'DKK',
+    Currency.HUF: 'HUF',
+    Currency.CZK: 'CZK',
+    Currency.AUD: 'AUD',
+    Currency.RON: 'RON',
+    Currency.SEK: 'SEK',
+    Currency.IDR: 'IDR',
+    Currency.INR: 'INR',
+    Currency.BRL: 'BRL',
+    Currency.RUB: 'RUB',
+    Currency.HRK: 'HRK',
+    Currency.JPY: 'JPY',
+    Currency.THB: 'THB',
+    Currency.CHF: 'CHF',
+    Currency.SGD: 'SGD',
+    Currency.PLN: 'PLN',
+    Currency.BGN: 'BGN',
+    Currency.TRY: 'TRY',
+    Currency.CNY: 'CNY',
+    Currency.NOK: 'NOK',
+    Currency.NZD: 'NZD',
+    Currency.ZAR: 'ZAR',
+    Currency.USD: 'USD',
+    Currency.MXN: 'MXN',
+    Currency.ILS: 'ILS',
+    Currency.GBP: 'GBP',
+    Currency.KRW: 'KRW',
+    Currency.MYR: 'MYR',
+  };
   
+  String get sthortcut => shortcuts[this];
+
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/nav_bar_bloc.dart';
 import './first_page.dart';
 import './second_page.dart';
-import '../bloc/nav_bar_bloc.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key key, this.title}) : super(key: key);
