@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CurrencyRepository {
+  String _base = 'EUR';
   List _data = [];
 
   Future<void> fetchData() async {
@@ -12,15 +13,16 @@ class CurrencyRepository {
     );
     // print(response.body);
     var convertDataToJson = json.decode(response.body);
-    var res = convertDataToJson['rates'];
-
-    if ( res != null ) {
-      res.forEach((final String key, final value) {
+    print(convertDataToJson['base']);
+    if ( convertDataToJson != null ) {
+      if ( convertDataToJson['base'] != 'EUR' ) _base = convertDataToJson['base'];
+      convertDataToJson['rates'].forEach((final String key, final value) {
         _data.add({ 'currency': key, 'value': value });
       });
     }
     
   }
 
+  String get base => _base;
   List get data => _data;
 }

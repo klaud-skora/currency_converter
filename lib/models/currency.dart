@@ -1,6 +1,5 @@
-// FOER 1 EUR
-
 enum Currency {
+  EUR,
   CAD,
   HKD,
   ISK,
@@ -38,6 +37,7 @@ enum Currency {
 extension CurrencyExtension on Currency {
 
   static final shortcuts = {
+    Currency.EUR: 'EUR',
     Currency.CAD: 'CAD',
     Currency.HKD: 'HKD',
     Currency.ISK: 'ISK',
