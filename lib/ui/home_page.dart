@@ -1,37 +1,53 @@
 import 'package:flutter/material.dart';
-import './converter_page.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import './first_page.dart';
+import './second_page.dart';
+import '../bloc/nav_bar_bloc.dart';
 
 class HomePage extends StatelessWidget {
+  HomePage({Key key, this.title}) : super(key: key);
   final String title;
-  HomePage({ this.title });
-  void _onItemTapped(int index) {
-  print('\$');
-  }
 
+  @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
-      appBar: AppBar(title: Text( title )),
-      body: 4 == 4 ? // converter view
-      
-      ConverterPage() : 
-      Container(
-        child: Text('Currency'),
+      appBar: AppBar(
+        title: Text( title ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.attach_money),
-          title: Text('Converter'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.business),
-          title: Text(''),
-        ),
-      ],
-      currentIndex: 0,
-      selectedItemColor: Colors.amber[800],
-      onTap: _onItemTapped,
-    ),
+      body: BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
+        builder: (BuildContext context, BottomNavigationState state) {
+          if (state is PageLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (state is FirstPageLoaded) {
+            return FirstPage();
+          }
+          if (state is SecondPageLoaded) {
+            return SecondPage();
+          }
+          return Container();
+        },
+      ),
+      bottomNavigationBar: BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
+          builder: (BuildContext context, BottomNavigationState state) {
+            return BottomNavigationBar(
+              currentIndex: BlocProvider.of<BottomNavigationBloc>(context).currentIndex,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home, color: Colors.black),
+                  title: Text('Currency converter'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.all_inclusive, color: Colors.black),
+                  title: Text('How much is 1?'),
+                ),
+              ],
+              onTap: (index) => BlocProvider.of<BottomNavigationBloc>(context).add(PageTapped(index: index)),
+            );
+          }
+      ),
     );
   }
 }
