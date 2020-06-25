@@ -62,8 +62,12 @@ class PageLoading extends BottomNavigationState {
 
 class FirstPageLoaded extends BottomNavigationState {
 
+  final double result;
+  FirstPageLoaded( this.result );
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [result];
+
 }
 
 class SecondPageLoaded extends BottomNavigationState {
@@ -75,6 +79,7 @@ class SecondPageLoaded extends BottomNavigationState {
 class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationState> {
   final CurrencyRepository currencyRepository;
   int currentIndex = 0;
+  String base = 'PLN';
 
   BottomNavigationBloc({
     this.currencyRepository,
@@ -94,26 +99,26 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       yield PageLoading();
 
       if (this.currentIndex == 0) {
-        yield FirstPageLoaded(); // status: none
+        yield FirstPageLoaded(null); // status: none
       }
       if (this.currentIndex == 1) {
         yield SecondPageLoaded(); // status: none
       }
     }
     if ( event is GetData ) {
-      List fetchedData = await _getCurrencyData();
+      List fetchedData = await _getCurrencyData(this.base);
       List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
       print('give me data');
-      print(dataToDisplay);
-      if (this.currentIndex == 0 ) yield FirstPageLoaded(); // data + status
+      print(dataToDisplay); // obliczenia
+      if (this.currentIndex == 0 ) yield FirstPageLoaded(44.4); // result + status
       if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
     }
   }
 
-  Future<List> _getCurrencyData() async {
+  Future<List> _getCurrencyData(base) async {
     List data;
 
-      await currencyRepository.fetchData();
+      await currencyRepository.fetchData(base);
       data = currencyRepository.data;
 
     return data;

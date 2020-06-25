@@ -2,13 +2,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CurrencyRepository {
-  String _base = 'EUR';
+  String _base = 'PLN';
   List _data = [];
 
-  Future<void> fetchData() async {
+  Future<void> fetchData(base) async {
     
     var response = await http.get(
-      Uri.encodeFull('https://api.exchangeratesapi.io/latest'),
+      Uri.encodeFull('https://api.exchangeratesapi.io/latest?base=$base'),
       headers: {"Accept": "application/json"}
     );
     // print(response.body);
