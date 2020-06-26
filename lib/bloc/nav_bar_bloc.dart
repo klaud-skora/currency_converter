@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 import '../repositories/currency_repository.dart';
+import '../logic/calculator.dart';
 
 abstract class BottomNavigationEvent extends Equatable {
   BottomNavigationEvent([List props = const []]) : super();
@@ -77,6 +78,7 @@ class SecondPageLoaded extends BottomNavigationState {
 }
 
 class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationState> {
+  Calculator calc = Calculator();
   final CurrencyRepository currencyRepository;
   int currentIndex = 0;
   String base = 'PLN';

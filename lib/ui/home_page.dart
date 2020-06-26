@@ -36,11 +36,11 @@ class HomePage extends StatelessWidget {
               currentIndex: BlocProvider.of<BottomNavigationBloc>(context).currentIndex,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home, color: Colors.black),
+                  icon: Icon(Icons.home, color: Color(0xffaa4b6b)),
                   title: Text('Currency converter'),
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.all_inclusive, color: Colors.black),
+                  icon: Icon(Icons.all_inclusive, color: Color(0xffaa4b6b)),
                   title: Text('How much is 1?'),
                 ),
               ],
