@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:currencyconverter/models/currency.dart';
+import 'package:currencyconverter/ui/first_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
@@ -34,6 +36,16 @@ class GetData extends BottomNavigationEvent {
 
  @override
   List<Object> get props => [];
+}
+
+class ChangeCurrency extends BottomNavigationEvent {
+  final CurrencyOption option;
+  final Currency currency;
+  ChangeCurrency({this.option, this.currency});
+
+
+  @override
+  List<Object> get props => [option, currency];
 }
 
 @immutable
@@ -81,7 +93,8 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   Calculator calc = Calculator();
   final CurrencyRepository currencyRepository;
   int currentIndex = 0;
-  String base = 'PLN';
+  final String base = 'EUR';
+  final String target = 'PLN';
 
   BottomNavigationBloc({
     this.currencyRepository,
