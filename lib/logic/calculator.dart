@@ -1,6 +1,8 @@
 class Calculator {
-  int multiplier;
-  double convertValue;
+  double multiplier;
+  double value;
 
-  double currencyValue(int multiplier, double convertValue) => multiplier * convertValue;
+  Calculator({ multiplier, value });
+
+  double currencyValue(double multiplier, double value) => multiplier * value;
 }

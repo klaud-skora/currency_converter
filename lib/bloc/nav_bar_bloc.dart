@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-// import 'package:currencyconverter/models/currency.dart';
 import 'package:currencyconverter/ui/first_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -25,7 +24,7 @@ class PageTapped extends BottomNavigationEvent {
 
   PageTapped({@required this.index}) : super([index]);
 
- @override
+  @override
   List<Object> get props => [];
 
   @override
@@ -34,8 +33,11 @@ class PageTapped extends BottomNavigationEvent {
 
 class GetData extends BottomNavigationEvent {
 
- @override
-  List<Object> get props => [];
+  final double amount;
+  GetData({this.amount});
+
+  @override
+  List<Object> get props => [amount];
 }
 
 class ChangeCurrency extends BottomNavigationEvent {
@@ -93,13 +95,14 @@ class SecondPageLoaded extends BottomNavigationState {
 }
 
 class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationState> {
+
   Calculator calc = Calculator();
   final CurrencyRepository currencyRepository;
   int currentIndex = 0;
   String _base = 'EUR';
   String _target = 'PLN';
-  double _result = 4.4;
-  String _status = 'connected';
+  double _result = 0;
+  String _status = 'connected'; // noData / oldData / newData 
 
   String get base => _base;
   String get target => _target;
@@ -124,37 +127,40 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       yield PageLoading();
 
       if (this.currentIndex == 0) {
-        yield FirstPageLoaded(base: base, target: target, result: result, status: status); // status: none
+        yield FirstPageLoaded(base: base, target: target, result: result, status: status);
       }
       if (this.currentIndex == 1) {
-        yield SecondPageLoaded(); // status: none
+        yield SecondPageLoaded(); 
       }
     }
-    if ( event is GetData ) {
-      List fetchedData = await _getCurrencyData(this.base);
-      List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
-      print(dataToDisplay);
-      if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: 44.4, status: status); // result + status
-      if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
-    }
-     if ( event is ChangeCurrency ) {
+    if ( event is ChangeCurrency ) {
       if (this.currentIndex == 0 ) {
         
         event.option == CurrencyOption.base ? _base = event.currency : _target = event.currency;
-        yield FirstPageLoaded(base: base, target: target, result: 44.4, status: status); 
+        yield FirstPageLoaded(base: base, target: target, result: result, status: status); 
       }
-        
-        
+
       if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
     }
+    if ( event is GetData ) {
+      
+      List fetchedData = await _getCurrencyData(base);
+      List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
+      
+      var targetCurrency = dataToDisplay.firstWhere((rate) => rate['currency'] == target ); 
+      _result = calc.currencyValue(event.amount, targetCurrency['value']);
+      if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status); // result + status
+      if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
+    }
+
   }
 
   Future<List> _getCurrencyData(base) async {
+
     List data;
-
-      await currencyRepository.fetchData(base);
-      data = currencyRepository.data;
-
+    await currencyRepository.fetchData(base);
+    data = currencyRepository.data;
     return data;
+
   }
 }

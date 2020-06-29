@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './currency_picker.dart';
+import '../logic/parser.dart';
 import '../bloc/nav_bar_bloc.dart';
+import '../bloc/text_field_bloc.dart';
 
 enum CurrencyOption { base, target }
 
@@ -12,7 +14,7 @@ class FirstPage extends StatelessWidget {
 
   FirstPage(this.base, this.target); 
 
-  final fromTextController = TextEditingController();
+  final TextBloc _textBloc = TextBloc();
 
   changeCurrency(BuildContext context, String marked, CurrencyOption currencyOption) async {
     
@@ -20,7 +22,7 @@ class FirstPage extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (context) => CurrencyPicker(option: currencyOption, marked: marked)),
     );
-    print('strumien');
+    
     BlocProvider.of<BottomNavigationBloc>(context).add(ChangeCurrency(option: currencyOption, currency: pickedCurrency));
   }
   @override
@@ -29,6 +31,7 @@ class FirstPage extends StatelessWidget {
     String target = BlocProvider.of<BottomNavigationBloc>(context).target;
     Color textColor = Color(0xff6b6b83);
     Color themeColor = Color(0xff3b8d99);
+    double amount = 0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -47,9 +50,6 @@ class FirstPage extends StatelessWidget {
                   textAlign: TextAlign.center, 
                 ),
                 SizedBox(height: 20.0),
-                Container(
-                  child: Text( '${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data}' )
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -57,7 +57,18 @@ class FirstPage extends StatelessWidget {
                       child: Flexible(
                         child: SizedBox(
                           width: 80.0,
-                          child: TextField(decoration: InputDecoration(hintText: 'Amount')),
+                          child: StreamBuilder(
+                            stream: _textBloc.textStream,
+                            builder: (context, AsyncSnapshot<String> textSnap) {
+                              return TextField(
+                                onChanged: (String text) {
+                                  _textBloc.updateText(text);
+                                  amount = parser(text);
+                                },
+                                decoration: InputDecoration(hintText: 'Amount'),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -91,7 +102,7 @@ class FirstPage extends StatelessWidget {
                         border: Border.all(color: themeColor, width: 2.0),
                         borderRadius: BorderRadius.circular(14.0),
                       ),
-                      child: Text('0',
+                      child: Text( '${BlocProvider.of<BottomNavigationBloc>(context).result}',
                         style: TextStyle(
                           color: textColor,
                           fontSize: 16,
@@ -120,7 +131,7 @@ class FirstPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18.0),
                     side: BorderSide(width: 2.0, color: Color(0xffaa4b6b)),
                   ),
-                  onPressed: () => BlocProvider.of<BottomNavigationBloc>(context).add(GetData()),
+                  onPressed: () => BlocProvider.of<BottomNavigationBloc>(context).add(GetData(amount: amount)),
                   child: Text('CONVERT', style: TextStyle( color: textColor, fontSize: 22.0)),
                 ),
               ],
