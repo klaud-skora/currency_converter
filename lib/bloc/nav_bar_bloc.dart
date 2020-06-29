@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:currencyconverter/models/currency.dart';
+// import 'package:currencyconverter/models/currency.dart';
 import 'package:currencyconverter/ui/first_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -40,7 +40,7 @@ class GetData extends BottomNavigationEvent {
 
 class ChangeCurrency extends BottomNavigationEvent {
   final CurrencyOption option;
-  final Currency currency;
+  final String currency;
   ChangeCurrency({this.option, this.currency});
 
 
@@ -75,11 +75,14 @@ class PageLoading extends BottomNavigationState {
 
 class FirstPageLoaded extends BottomNavigationState {
 
+  final String base;
+  final String target;
   final double result;
-  FirstPageLoaded( this.result );
+  final String status;
+  FirstPageLoaded( { this.base, this.target, this.result, this.status });
 
   @override
-  List<Object> get props => [result];
+  List<Object> get props => [base, target, result, status];
 
 }
 
@@ -93,8 +96,15 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   Calculator calc = Calculator();
   final CurrencyRepository currencyRepository;
   int currentIndex = 0;
-  final String base = 'EUR';
-  final String target = 'PLN';
+  String _base = 'EUR';
+  String _target = 'PLN';
+  double _result = 4.4;
+  String _status = 'connected';
+
+  String get base => _base;
+  String get target => _target;
+  double get result => _result;
+  String get status => _status;
 
   BottomNavigationBloc({
     this.currencyRepository,
@@ -114,7 +124,7 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       yield PageLoading();
 
       if (this.currentIndex == 0) {
-        yield FirstPageLoaded(null); // status: none
+        yield FirstPageLoaded(base: base, target: target, result: result, status: status); // status: none
       }
       if (this.currentIndex == 1) {
         yield SecondPageLoaded(); // status: none
@@ -123,9 +133,18 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
     if ( event is GetData ) {
       List fetchedData = await _getCurrencyData(this.base);
       List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
-      print('give me data');
-      print(dataToDisplay); // obliczenia
-      if (this.currentIndex == 0 ) yield FirstPageLoaded(44.4); // result + status
+      print(dataToDisplay);
+      if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: 44.4, status: status); // result + status
+      if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
+    }
+     if ( event is ChangeCurrency ) {
+      if (this.currentIndex == 0 ) {
+        
+        event.option == CurrencyOption.base ? _base = event.currency : _target = event.currency;
+        yield FirstPageLoaded(base: base, target: target, result: 44.4, status: status); 
+      }
+        
+        
       if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
     }
   }

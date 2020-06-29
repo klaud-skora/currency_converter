@@ -72,6 +72,6 @@ extension CurrencyExtension on Currency {
     Currency.MYR: 'MYR',
   };
   
-  String get sthortcut => shortcuts[this];
+  String get shortcut => shortcuts[this];
 
 }

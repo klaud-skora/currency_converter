@@ -7,14 +7,20 @@ import '../bloc/nav_bar_bloc.dart';
 enum CurrencyOption { base, target }
 
 class FirstPage extends StatelessWidget {
+  final String base;
+  final String target;
+
+  FirstPage(this.base, this.target); 
 
   final fromTextController = TextEditingController();
 
   changeCurrency(BuildContext context, String marked, CurrencyOption currencyOption) async {
+    
     final pickedCurrency = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CurrencyPicker(option: currencyOption, marked: marked)),
     );
+    print('strumien');
     BlocProvider.of<BottomNavigationBloc>(context).add(ChangeCurrency(option: currencyOption, currency: pickedCurrency));
   }
   @override
@@ -61,18 +67,11 @@ class FirstPage extends StatelessWidget {
                       child: FlatButton(
                         child: Row(
                           children: <Widget>[
-                            Text('${BlocProvider.of<BottomNavigationBloc>(context).base}'),
+                            Text('${this.base}'),
                             Icon(Icons.arrow_right, color: Color(0xffaa4b6b)),
                           ],
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (BuildContext context)  => CurrencyPicker(marked : '$base'), 
-                            )
-                          );
-                        },
+                        onPressed: () => changeCurrency(context, base, CurrencyOption.base)
                       ),
                     ),
                   ],

@@ -24,18 +24,18 @@ class CurrencyPicker extends StatelessWidget {
                   Container(
                     child: FlatButton(
                       onPressed: () {
-                        Navigator.pop(context, option);
+                        Navigator.pop(context, Currency.values[index].shortcut);
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Currency.values[index].sthortcut == this.marked ? Color(0xffaa4b6b) : Color(0xff3b8d99),
+                          color: Currency.values[index].shortcut == this.marked ? Color(0xffaa4b6b) : Color(0xff3b8d99),
                           borderRadius: BorderRadius.all(Radius.circular(50.0)),
                         ),
                         height: 25.0,   
                         child: Center(
                           child: Padding(
                             padding: EdgeInsets.only(top: 2.0),
-                            child: Text('${Currency.values[index].sthortcut}', style: TextStyle(color:Colors.white)),
+                            child: Text('${Currency.values[index].shortcut}', style: TextStyle(color:Colors.white)),
                           ),
                         ),
                       )
