@@ -81,7 +81,8 @@ class FirstPageLoaded extends BottomNavigationState {
   final String target;
   final double result;
   final String status;
-  FirstPageLoaded( { this.base, this.target, this.result, this.status });
+  final String error;
+  FirstPageLoaded({ this.base, this.target, this.result, this.status, this.error });
 
   @override
   List<Object> get props => [base, target, result, status];
@@ -103,11 +104,13 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   String _target = 'PLN';
   double _result = 0;
   String _status = 'connected'; // noData / oldData / newData 
+  String _error = '';
 
   String get base => _base;
   String get target => _target;
   double get result => _result;
   String get status => _status;
+  String get error  => _error;
 
   BottomNavigationBloc({
     this.currencyRepository,
@@ -124,7 +127,6 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
     if ( event is PageTapped ) {
       this.currentIndex = event.index;
       yield CurrentIndexChanged(currentIndex: this.currentIndex);
-      yield PageLoading();
 
       if (this.currentIndex == 0) {
         yield FirstPageLoaded(base: base, target: target, result: result, status: status);
@@ -143,14 +145,24 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
     }
     if ( event is GetData ) {
-      
-      List fetchedData = await _getCurrencyData(base);
-      List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
-      
-      var targetCurrency = dataToDisplay.firstWhere((rate) => rate['currency'] == target ); 
-      _result = calc.currencyValue(event.amount, targetCurrency['value']);
-      if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status); // result + status
-      if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
+      print(event.amount);
+      if (event.amount != null && event.amount > 0) {
+        _error = '';
+        yield PageLoading();
+        List fetchedData = await _getCurrencyData(base);
+        List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
+        
+        var targetCurrency = dataToDisplay.firstWhere((rate) => rate['currency'] == target ); 
+        _result = calc.currencyValue(event.amount, targetCurrency['value']);
+        if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
+        if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
+      } else {
+        _error = 'Input is wrong';
+        _result = 0;
+        if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
+        if( this.currentIndex == 1  ) yield SecondPageLoaded(); 
+      }
+
     }
 
   }

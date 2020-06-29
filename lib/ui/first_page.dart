@@ -87,6 +87,10 @@ class FirstPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                Container(
+                  margin: EdgeInsets.only(top: 10.0),
+                  child: Text(  '${BlocProvider.of<BottomNavigationBloc>(context).error}', style: TextStyle( color: Colors.red)),
+                ),
                 SizedBox(height: 20.0),
                 Icon(Icons.keyboard_arrow_down, size: 40.0, color: themeColor),
                 SizedBox(height: 20.0),
@@ -94,7 +98,9 @@ class FirstPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      width: 100.0,
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.4,
+                      ),
                       height: 50.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
