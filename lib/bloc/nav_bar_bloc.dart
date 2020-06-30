@@ -90,12 +90,14 @@ class FirstPageLoaded extends BottomNavigationState {
 }
 
 class SecondPageLoaded extends BottomNavigationState {
-  final String basicBase;
+  final String base;
   final List data;
-  SecondPageLoaded({ this.basicBase, this.data });
+  final Status status;
+  final String error;
+  SecondPageLoaded({ this.base, this.data, this.status, this.error });
 
   @override
-  List<Object> get props => [basicBase, data];
+  List<Object> get props => [base, data];
 }
 
 class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationState> {
@@ -105,14 +107,12 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   int currentIndex = 0;
   String _base = Currency.EUR.shortcut;
   String _target = Currency.PLN.shortcut;
-  String _basicBase = Currency.EUR.shortcut;
   double _result = 0;
   Status _status = Status.newData; // noData / oldData / newData 
   String _error = '';
 
   String get base => _base;
   String get target => _target;
-  String get basicBase => _basicBase;
   double get result => _result;
   Status get status => _status;
   String get error  => _error;
@@ -148,8 +148,8 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       }
 
       if( currentIndex == 1  ) {
-        if (event.option == CurrencyOption.basicBase)  _basicBase = event.currency;
-        yield SecondPageLoaded( basicBase: basicBase); // data + status
+        if (event.option == CurrencyOption.base)  _base = event.currency;
+        yield SecondPageLoaded( base: base); 
       }
     }
     if ( event is GetData ) {
@@ -158,18 +158,20 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
         yield PageLoading();
         List fetchedData = await _getCurrencyData(base);
         List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
+        List data = [];
+        dataToDisplay.forEach((rate) =>  data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
         
-        var targetCurrency = dataToDisplay.firstWhere((rate) => rate['currency'] == target ); 
-        _result = calc.currencyValue(event.amount, targetCurrency['value']);
+        var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : 0; 
+        _result = targetCurrency != 0 ? targetCurrency['value'] : 0;
+
         if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
-        if ( currentIndex == 1  ) yield SecondPageLoaded(data: dataToDisplay); // data + status
+        if ( currentIndex == 1  ) yield SecondPageLoaded(base: base, data: data, status: status, error: error); 
       } else {
         _error = 'Input is wrong';
         _result = 0;
         if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
-        if ( currentIndex == 1  ) yield SecondPageLoaded(); 
+        if ( currentIndex == 1  ) yield SecondPageLoaded(base: base, data: [], status: status, error: error); 
       }
-
     }
 
   }

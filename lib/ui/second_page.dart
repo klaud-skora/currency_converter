@@ -23,7 +23,7 @@ class SecondPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String basicBase = BlocProvider.of<BottomNavigationBloc>(context).basicBase;
+    String base = BlocProvider.of<BottomNavigationBloc>(context).base;
     Color textColor = Color(0xff6b6b83);
     Color themeColor = Color(0xff3b8d99);
     double amount = 0;
@@ -73,11 +73,11 @@ class SecondPage extends StatelessWidget {
                       child: FlatButton(
                         child: Row(
                           children: <Widget>[
-                            Text('$basicBase'),
+                            Text('$base'),
                             Icon(Icons.arrow_right, color: Color(0xffaa4b6b)),
                           ],
                         ),
-                        onPressed: () => changeCurrency(context, basicBase, CurrencyOption.basicBase)
+                        onPressed: () => changeCurrency(context, base, CurrencyOption.base)
                       ),
                     ),
                   ],
@@ -117,21 +117,20 @@ class SecondPage extends StatelessWidget {
                               child: Padding(
                                 padding: EdgeInsets.only(top: 2.0, bottom: 2.0, left: 2.0),
                                 child: Row(
-                                  // mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Container(
                                       alignment: Alignment.center,
-                                      width: 65.0,
+                                      width: 68.0,
                                       height: 50.0,
                                       padding: EdgeInsets.all(6.0),
                                       decoration: BoxDecoration(
-                                        color: Color(0xffaa4b6b).withOpacity(.5),
+                                        color: Color(0xffaa4b6b).withOpacity(.8),
                                         borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0), bottomLeft: Radius.circular(40.0) ),
                                       ),
                                       child: Text('${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data[index]['value']}'),
                                     ),
                                     SizedBox(width: 10.0),
-                                    Text('${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data[index]['currency']}'),
+                                    Text('${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data[index]['currency']}', style: TextStyle(fontSize: 16.0)),
                                   ],
                                 ),
                               ),

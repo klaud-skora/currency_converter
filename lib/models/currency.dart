@@ -76,6 +76,6 @@ extension CurrencyExtension on Currency {
 
 }
 
-enum CurrencyOption { base, target, basicBase }
+enum CurrencyOption { base, target }
 
 enum Status { noData, oldData, newData }
