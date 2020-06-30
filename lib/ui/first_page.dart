@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/currency.dart';
 import './currency_picker.dart';
 import '../logic/parser.dart';
 import '../bloc/nav_bar_bloc.dart';
 import '../bloc/text_field_bloc.dart';
 
-enum CurrencyOption { base, target }
-
 class FirstPage extends StatelessWidget {
+
   final String base;
   final String target;
 
@@ -25,10 +25,9 @@ class FirstPage extends StatelessWidget {
     
     BlocProvider.of<BottomNavigationBloc>(context).add(ChangeCurrency(option: currencyOption, currency: pickedCurrency));
   }
+
   @override
   Widget build(BuildContext context) {
-    String base = BlocProvider.of<BottomNavigationBloc>(context).base;
-    String target = BlocProvider.of<BottomNavigationBloc>(context).target;
     Color textColor = Color(0xff6b6b83);
     Color themeColor = Color(0xff3b8d99);
     double amount = 0;
@@ -78,7 +77,7 @@ class FirstPage extends StatelessWidget {
                       child: FlatButton(
                         child: Row(
                           children: <Widget>[
-                            Text('${this.base}'),
+                            Text('${BlocProvider.of<BottomNavigationBloc>(context).base}'),
                             Icon(Icons.arrow_right, color: Color(0xffaa4b6b)),
                           ],
                         ),

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:currencyconverter/ui/first_page.dart';
+import '../models/currency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
@@ -80,7 +80,7 @@ class FirstPageLoaded extends BottomNavigationState {
   final String base;
   final String target;
   final double result;
-  final String status;
+  final Status status;
   final String error;
   FirstPageLoaded({ this.base, this.target, this.result, this.status, this.error });
 
@@ -90,9 +90,12 @@ class FirstPageLoaded extends BottomNavigationState {
 }
 
 class SecondPageLoaded extends BottomNavigationState {
+  final String basicBase;
+  final List data;
+  SecondPageLoaded({ this.basicBase, this.data });
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [basicBase, data];
 }
 
 class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationState> {
@@ -100,16 +103,18 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   Calculator calc = Calculator();
   final CurrencyRepository currencyRepository;
   int currentIndex = 0;
-  String _base = 'EUR';
-  String _target = 'PLN';
+  String _base = Currency.EUR.shortcut;
+  String _target = Currency.PLN.shortcut;
+  String _basicBase = Currency.EUR.shortcut;
   double _result = 0;
-  String _status = 'connected'; // noData / oldData / newData 
+  Status _status = Status.newData; // noData / oldData / newData 
   String _error = '';
 
   String get base => _base;
   String get target => _target;
+  String get basicBase => _basicBase;
   double get result => _result;
-  String get status => _status;
+  Status get status => _status;
   String get error  => _error;
 
   BottomNavigationBloc({
@@ -122,30 +127,32 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   @override
   Stream<BottomNavigationState> mapEventToState(BottomNavigationEvent event) async* {
     if ( event is AppStarted ) {
-      this.add(PageTapped(index: this.currentIndex));
+      this.add(PageTapped(index: currentIndex));
     }
     if ( event is PageTapped ) {
-      this.currentIndex = event.index;
-      yield CurrentIndexChanged(currentIndex: this.currentIndex);
+      currentIndex = event.index;
+      yield CurrentIndexChanged(currentIndex: currentIndex);
 
-      if (this.currentIndex == 0) {
+      if (currentIndex == 0) {
         yield FirstPageLoaded(base: base, target: target, result: result, status: status);
       }
-      if (this.currentIndex == 1) {
+      if (currentIndex == 1) {
         yield SecondPageLoaded(); 
       }
     }
     if ( event is ChangeCurrency ) {
-      if (this.currentIndex == 0 ) {
+      if (currentIndex == 0 ) {
         
         event.option == CurrencyOption.base ? _base = event.currency : _target = event.currency;
         yield FirstPageLoaded(base: base, target: target, result: result, status: status); 
       }
 
-      if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
+      if( currentIndex == 1  ) {
+        if (event.option == CurrencyOption.basicBase)  _basicBase = event.currency;
+        yield SecondPageLoaded( basicBase: basicBase); // data + status
+      }
     }
     if ( event is GetData ) {
-      print(event.amount);
       if (event.amount != null && event.amount > 0) {
         _error = '';
         yield PageLoading();
@@ -154,13 +161,13 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
         
         var targetCurrency = dataToDisplay.firstWhere((rate) => rate['currency'] == target ); 
         _result = calc.currencyValue(event.amount, targetCurrency['value']);
-        if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
-        if( this.currentIndex == 1  ) yield SecondPageLoaded(); // data + status
+        if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
+        if ( currentIndex == 1  ) yield SecondPageLoaded(data: dataToDisplay); // data + status
       } else {
         _error = 'Input is wrong';
         _result = 0;
-        if (this.currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
-        if( this.currentIndex == 1  ) yield SecondPageLoaded(); 
+        if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: error); // result + status
+        if ( currentIndex == 1  ) yield SecondPageLoaded(); 
       }
 
     }

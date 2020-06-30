@@ -75,3 +75,7 @@ extension CurrencyExtension on Currency {
   String get shortcut => shortcuts[this];
 
 }
+
+enum CurrencyOption { base, target, basicBase }
+
+enum Status { noData, oldData, newData }

@@ -23,6 +23,5 @@ class CurrencyRepository {
   }
   
   List get data => _data;
-
   void listReset() => _data = [];
 }

@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.all_inclusive, color: Color(0xffaa4b6b)),
-                  title: Text('How much is 1?'),
+                  title: Text('Show currencies'),
                 ),
               ],
               onTap: (index) => BlocProvider.of<BottomNavigationBloc>(context).add(PageTapped(index: index)),

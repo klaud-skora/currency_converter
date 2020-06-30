@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/currency.dart';
 
-import './first_page.dart'; // do zmiany import CurrencyOption
-
 class CurrencyPicker extends StatelessWidget {
   final String marked;
   final CurrencyOption option;
@@ -18,32 +16,30 @@ class CurrencyPicker extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return Container(
             padding: const EdgeInsets.only(left: 65.0, right: 65.0),
-            child: Center(
-              child: Column(
-                children: [
-                  Container(
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context, Currency.values[index].shortcut);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Currency.values[index].shortcut == this.marked ? Color(0xffaa4b6b) : Color(0xff3b8d99),
-                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
+            child: Column(
+              children: [
+                Container(
+                  child: FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context, Currency.values[index].shortcut);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Currency.values[index].shortcut == this.marked ? Color(0xffaa4b6b) : Color(0xff3b8d99),
+                        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                      ),
+                      height: 25.0,   
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 2.0),
+                          child: Text('${Currency.values[index].shortcut}', style: TextStyle(color:Colors.white)),
                         ),
-                        height: 25.0,   
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 2.0),
-                            child: Text('${Currency.values[index].shortcut}', style: TextStyle(color:Colors.white)),
-                          ),
-                        ),
-                      )
+                      ),
                     )
                   )
-                ],
-              )
-            )
+                )
+              ],
+            ),
           );
         }
       ),
