@@ -1,14 +1,15 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import './shared_data.dart';
+import './shared_pref.dart';
 
 class CurrencyRepository {
   
-  SharedData sharedData = SharedData();
+  SharedPref sharedPref = SharedPref();
   List _data;
-  List _shared = [];
+  List _sharedData = [];
 
   Future<void> fetchData(base) async {
+    listReset();
     try {
       var response = await http.get(
         Uri.encodeFull('https://api.exchangeratesapi.io/latest?base=$base'),
@@ -19,9 +20,7 @@ class CurrencyRepository {
       
       if ( convertDataToJson != null ) {
 
-        sharedData.save(base, response.body);
-
-        listReset();
+        sharedPref.save(base, response.body);
         convertDataToJson['rates'].forEach((final String key, final value) {
           _data.add({ 'currency': key, 'value': value });
         });
@@ -32,15 +31,19 @@ class CurrencyRepository {
     
   }
 
-  showData(base) async {
-    var res = await sharedData.read(base);
-    var convertDataFromJson = json.decode(res);
-    print(convertDataFromJson);
-    
+  Future<void> showData(base) async {
+    prefReset();
+    var res = await sharedPref.read(base);
+    if(res != null) {
+      var convertDataFromJson = json.decode(res);
+      convertDataFromJson['rates'].forEach((final String key, final value) {
+        _sharedData.add({ 'currency': key, 'value': value });
+      });
+    }
   }
-  
 
   List get data => _data;
-  List get shared => _shared;
+  List get sharedData => _sharedData;
   void listReset() => _data = [];
+  void prefReset() => _sharedData = [];
 }

@@ -151,23 +151,23 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
     }
     if ( event is GetData ) {
       Status status = Status.defaultStatus;
-
+      
       yield PageLoading();
 
-        List fetchedData = await _getCurrencyData(base);
-        List sharedData = await _getCurrencySharedData(base);
-
-        print(sharedData);
-        List dataToDisplay = fetchedData == null ? sharedData : fetchedData;
+      List fetchedData = await _getCurrencyData(base);
+      List sharedData = await _getCurrencySharedData(base);
+      // print(fetchedData);
+      List dataToDisplay = fetchedData.length != 0 ? sharedData : fetchedData;
 
       if (event.amount != null && event.amount > 0) {
-        status = fetchedData != null ? Status.newData : currencyRepository.data != null ? Status.oldData : Status.noData;
+        status = fetchedData.length != 0 ? Status.newData : sharedData != null ? Status.oldData : Status.noData;
+
         _data = [];
         double result = 0;
         if( dataToDisplay != null ) {
           dataToDisplay.forEach((rate) =>  _data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
         
-          var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : 0; 
+          var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : sharedData.length > 0 ? sharedData.firstWhere((rate) => rate['currency'] == target ) : 0; 
           result = targetCurrency != 0 ? targetCurrency['value'] : 0.0;
         }
 
@@ -194,10 +194,8 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
 
     List sharedData;
     await currencyRepository.showData(base);
-    sharedData = currencyRepository.shared;
+    sharedData = currencyRepository.sharedData;
     return sharedData;
-
-
   }
 }
 
