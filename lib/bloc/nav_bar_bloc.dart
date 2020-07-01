@@ -153,17 +153,23 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       Status status = Status.defaultStatus;
 
       yield PageLoading();
+
         List fetchedData = await _getCurrencyData(base);
-        List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
+        List sharedData = await _getCurrencySharedData(base);
+
+        print(sharedData);
+        List dataToDisplay = fetchedData == null ? sharedData : fetchedData;
 
       if (event.amount != null && event.amount > 0) {
-
-        status = fetchedData.length != 0 ? Status.newData : currencyRepository.data.length > 0 ? Status.oldData : Status.noData;
+        status = fetchedData != null ? Status.newData : currencyRepository.data != null ? Status.oldData : Status.noData;
         _data = [];
-        dataToDisplay.forEach((rate) =>  _data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
+        double result = 0;
+        if( dataToDisplay != null ) {
+          dataToDisplay.forEach((rate) =>  _data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
         
-        var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : 0; 
-        var result = targetCurrency != 0 ? targetCurrency['value'] : 0.0;
+          var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : 0; 
+          result = targetCurrency != 0 ? targetCurrency['value'] : 0.0;
+        }
 
         if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: Error.none.text);
         if ( currentIndex == 1  ) yield SecondPageLoaded(basicBase: basicBase, data: data, status: status, error: Error.none.text); 
@@ -183,4 +189,15 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
     return data;
 
   }
+
+  Future<List> _getCurrencySharedData(base) async {
+
+    List sharedData;
+    await currencyRepository.showData(base);
+    sharedData = currencyRepository.shared;
+    return sharedData;
+
+
+  }
 }
+

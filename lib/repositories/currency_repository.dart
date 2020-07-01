@@ -1,9 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import './shared_data.dart';
 
 class CurrencyRepository {
   
+  SharedData sharedData = SharedData();
   List _data;
+  List _shared = [];
 
   Future<void> fetchData(base) async {
     try {
@@ -15,6 +18,9 @@ class CurrencyRepository {
       var convertDataToJson = json.decode(response.body);
       
       if ( convertDataToJson != null ) {
+
+        sharedData.save(base, response.body);
+
         listReset();
         convertDataToJson['rates'].forEach((final String key, final value) {
           _data.add({ 'currency': key, 'value': value });
@@ -25,7 +31,16 @@ class CurrencyRepository {
     }
     
   }
+
+  showData(base) async {
+    var res = await sharedData.read(base);
+    var convertDataFromJson = json.decode(res);
+    print(convertDataFromJson);
+    
+  }
   
+
   List get data => _data;
+  List get shared => _shared;
   void listReset() => _data = [];
 }
