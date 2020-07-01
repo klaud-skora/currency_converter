@@ -6,6 +6,7 @@ import './currency_picker.dart';
 import '../logic/parser.dart';
 import '../bloc/nav_bar_bloc.dart';
 import '../bloc/text_field_bloc.dart';
+import './internet_status.dart';
 
 class FirstPage extends StatelessWidget {
 
@@ -39,6 +40,8 @@ class FirstPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                InternetStatus(status: BlocProvider.of<BottomNavigationBloc>(context).status),
+                SizedBox(height: 15.0),
                 Text('Choose your base and target currencies, then you can see how much you can get for any amount you want! ',
                   style: TextStyle(fontSize: 17.0, color: textColor),
                   textAlign: TextAlign.center, 

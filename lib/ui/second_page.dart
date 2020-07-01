@@ -6,6 +6,7 @@ import './currency_picker.dart';
 import '../logic/parser.dart';
 import '../bloc/nav_bar_bloc.dart';
 import '../bloc/text_field_bloc.dart';
+import './internet_status.dart';
 
 class SecondPage extends StatelessWidget {
 
@@ -35,6 +36,8 @@ class SecondPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                InternetStatus(status: BlocProvider.of<BottomNavigationBloc>(context).status),
+                SizedBox(height: 15.0),
                 Text('Choose a currency and it\'s amount \nto see the values of others! ',
                   style: TextStyle(fontSize: 17.0, color: textColor),
                   textAlign: TextAlign.center, 

@@ -108,7 +108,7 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   String _base = Currency.EUR.shortcut;
   String _target = Currency.PLN.shortcut;
   double _result = 0;
-  Status _status = Status.newData; // noData / oldData / newData 
+  Status _status = Status.defaultStatus;
   String _error = '';
 
   String get base => _base;
@@ -158,6 +158,8 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
         yield PageLoading();
         List fetchedData = await _getCurrencyData(base);
         List dataToDisplay = fetchedData == null ? currencyRepository.data : fetchedData;
+
+        _status = fetchedData.length != 0 ? Status.newData : currencyRepository.data.length > 0 ? Status.oldData : Status.noData;
         List data = [];
         dataToDisplay.forEach((rate) =>  data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
         
