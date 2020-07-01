@@ -10,11 +10,6 @@ import './internet_status.dart';
 
 class FirstPage extends StatelessWidget {
 
-  final String base;
-  final String target;
-
-  FirstPage(this.base, this.target); 
-
   final TextBloc _textBloc = TextBloc();
 
   changeCurrency(BuildContext context, String marked, CurrencyOption currencyOption) async {
@@ -40,7 +35,7 @@ class FirstPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                InternetStatus(status: BlocProvider.of<BottomNavigationBloc>(context).status),
+                InternetStatus(status: BlocProvider.of<BottomNavigationBloc>(context).state.props[3]),
                 SizedBox(height: 15.0),
                 Text('Choose your base and target currencies, then you can see how much you can get for any amount you want! ',
                   style: TextStyle(fontSize: 17.0, color: textColor),
@@ -80,18 +75,18 @@ class FirstPage extends StatelessWidget {
                       child: FlatButton(
                         child: Row(
                           children: <Widget>[
-                            Text('${BlocProvider.of<BottomNavigationBloc>(context).base}'),
+                            Text('${BlocProvider.of<BottomNavigationBloc>(context).state.props[0]}'),
                             Icon(Icons.arrow_right, color: Color(0xffaa4b6b)),
                           ],
                         ),
-                        onPressed: () => changeCurrency(context, base, CurrencyOption.base)
+                        onPressed: () => changeCurrency(context, BlocProvider.of<BottomNavigationBloc>(context).state.props[0], CurrencyOption.base)
                       ),
                     ),
                   ],
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10.0),
-                  child: Text(  '${BlocProvider.of<BottomNavigationBloc>(context).error}', style: TextStyle( color: Colors.red)),
+                  child: Text(  '${BlocProvider.of<BottomNavigationBloc>(context).state.props[4]}', style: TextStyle( color: Colors.red)),
                 ),
                 SizedBox(height: 20.0),
                 Icon(Icons.keyboard_arrow_down, size: 40.0, color: themeColor),
@@ -110,7 +105,7 @@ class FirstPage extends StatelessWidget {
                         border: Border.all(color: themeColor, width: 2.0),
                         borderRadius: BorderRadius.circular(14.0),
                       ),
-                      child: Text( '${BlocProvider.of<BottomNavigationBloc>(context).result}',
+                      child: Text( '${BlocProvider.of<BottomNavigationBloc>(context).state.props[2]}',
                         style: TextStyle(
                           color: textColor,
                           fontSize: 16,
@@ -123,11 +118,11 @@ class FirstPage extends StatelessWidget {
                       child: FlatButton(
                         child: Row(
                           children: <Widget>[
-                            Text('${BlocProvider.of<BottomNavigationBloc>(context).target}'),
+                            Text('${BlocProvider.of<BottomNavigationBloc>(context).state.props[1]}'),
                             Icon(Icons.arrow_right, color: Color(0xffaa4b6b)),
                           ],
                         ),
-                        onPressed: () => changeCurrency(context, target, CurrencyOption.target),
+                        onPressed: () => changeCurrency(context, BlocProvider.of<BottomNavigationBloc>(context).state.props[1], CurrencyOption.target),
                       ),
                     ),
                   ],

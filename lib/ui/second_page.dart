@@ -24,7 +24,6 @@ class SecondPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String base = BlocProvider.of<BottomNavigationBloc>(context).base;
     Color textColor = Color(0xff6b6b83);
     Color themeColor = Color(0xff3b8d99);
     double amount = 0;
@@ -36,7 +35,7 @@ class SecondPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                InternetStatus(status: BlocProvider.of<BottomNavigationBloc>(context).status),
+                InternetStatus(status: BlocProvider.of<BottomNavigationBloc>(context).state.props[2]),
                 SizedBox(height: 15.0),
                 Text('Choose a currency and it\'s amount \nto see the values of others! ',
                   style: TextStyle(fontSize: 17.0, color: textColor),
@@ -76,18 +75,18 @@ class SecondPage extends StatelessWidget {
                       child: FlatButton(
                         child: Row(
                           children: <Widget>[
-                            Text('$base'),
+                            Text('${BlocProvider.of<BottomNavigationBloc>(context).basicBase}'),
                             Icon(Icons.arrow_right, color: Color(0xffaa4b6b)),
                           ],
                         ),
-                        onPressed: () => changeCurrency(context, base, CurrencyOption.base)
+                        onPressed: () => changeCurrency(context, BlocProvider.of<BottomNavigationBloc>(context).basicBase, CurrencyOption.basicBase)
                       ),
                     ),
                   ],
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10.0),
-                  child: Text(  '${BlocProvider.of<BottomNavigationBloc>(context).error}', style: TextStyle( color: Colors.red)),
+                  child: Text(  '${BlocProvider.of<BottomNavigationBloc>(context).state.props[3]}', style: TextStyle( color: Colors.red)),
                 ),
                 SizedBox(height: 20.0),
                 RaisedButton(
@@ -100,7 +99,7 @@ class SecondPage extends StatelessWidget {
                   child: Text('SHOW DATA', style: TextStyle( color: textColor, fontSize: 22.0)),
                 ),
                 SizedBox(height: 20.0),
-                BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data.length != 0 ? ListView.builder(
+                BlocProvider.of<BottomNavigationBloc>(context).data.length != 0 && BlocProvider.of<BottomNavigationBloc>(context).state.props[1] != null ? ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -130,7 +129,7 @@ class SecondPage extends StatelessWidget {
                                         color: Color(0xffaa4b6b).withOpacity(.8),
                                         borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0), bottomLeft: Radius.circular(40.0) ),
                                       ),
-                                      child: Text('${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data[index]['value']}'),
+                                      child: Text('${BlocProvider.of<BottomNavigationBloc>(context).data[index]['value']}'),
                                     ),
                                     SizedBox(width: 10.0),
                                     Text('${BlocProvider.of<BottomNavigationBloc>(context).currencyRepository.data[index]['currency']}', style: TextStyle(fontSize: 16.0)),

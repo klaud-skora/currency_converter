@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class CurrencyRepository {
   
-  List _data = [];
+  List _data;
 
   Future<void> fetchData(base) async {
     try {

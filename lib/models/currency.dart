@@ -76,7 +76,7 @@ extension CurrencyExtension on Currency {
 
 }
 
-enum CurrencyOption { base, target }
+enum CurrencyOption { base, target, basicBase }
 
 enum Status { defaultStatus, noData, oldData, newData }
 
@@ -86,6 +86,17 @@ extension StatusExtension on Status {
     Status.noData: 'No Internet! Data is not available to get.',
     Status.oldData: 'No Internet! Data may not be valid.',
     Status.newData: 'You successfully fetched data.',
+  };
+
+  String get text => texts[this];
+}
+
+enum Error { none, input }
+
+extension ErrorExtension on Error {
+  static final texts = {
+    Error.none: '',
+    Error.input: 'Input is wrong',
   };
 
   String get text => texts[this];

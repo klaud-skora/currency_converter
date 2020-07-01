@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
           if (state is FirstPageLoaded) {
-            return FirstPage(state.base, state.target);
+            return FirstPage();
           }
           if (state is SecondPageLoaded) {
             return SecondPage();
