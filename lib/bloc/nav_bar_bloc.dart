@@ -146,6 +146,7 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
       List sharedData = await _getCurrencySharedData(base);
       
       List dataToDisplay = fetchedData.length == 0 ? sharedData : fetchedData;
+      
       if (event.amount != null && event.amount > 0) {
         status = fetchedData.length != 0 ? Status.newData : sharedData.length != 0 ? Status.oldData : Status.noData;
 
@@ -154,18 +155,24 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
         if( dataToDisplay != null ) {
           dataToDisplay.forEach((rate) =>  _data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
           
-          var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : sharedData.length > 0 ? sharedData.firstWhere((rate) => rate['currency'] == target ) : 0; 
+          var targetCurrency = data.length > 0 ? getTargetCurrency(data) : sharedData.length > 0 ? getTargetCurrency(sharedData) : 0; 
           result = targetCurrency != 0 ? targetCurrency['value'] : 0.0;
         }
 
-        if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: result, status: status, error: Error.none.text);
-        if ( currentIndex == 1  ) yield SecondPageLoaded(basicBase: basicBase, data: data, status: status, error: Error.none.text); 
+        yield currentIndex == 0 
+        ? FirstPageLoaded(base: base, target: target, result: result, status: status, error: Error.none.text)
+        : SecondPageLoaded(basicBase: basicBase, data: data, status: status, error: Error.none.text); 
       } else {
-        if ( currentIndex == 0 ) yield FirstPageLoaded(base: base, target: target, result: 0, status: status, error: Error.input.text);
-        if ( currentIndex == 1  ) yield SecondPageLoaded(basicBase: basicBase, data: null, status: status, error: Error.input.text); 
+        yield currentIndex == 0 
+        ? FirstPageLoaded(base: base, target: target, result: 0, status: status, error: Error.input.text) 
+        : SecondPageLoaded(basicBase: basicBase, data: null, status: status, error: Error.input.text); 
       }
     }
 
+  }
+
+  getTargetCurrency(data) {
+    return data.firstWhere((rate) => rate['currency'] == target );
   }
 
   Future<List> _getCurrencyData(base) async {

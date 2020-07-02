@@ -10,6 +10,7 @@ class CurrencyRepository {
 
   Future<void> fetchData(base) async {
     listReset();
+    var res = await sharedPref.read(base);
     try {
       var response = await http.get(
         Uri.encodeFull('https://api.exchangeratesapi.io/latest?base=$base'),
@@ -19,8 +20,12 @@ class CurrencyRepository {
       var convertDataToJson = json.decode(response.body);
       
       if ( convertDataToJson != null ) {
-
-        sharedPref.save(base, response.body);
+        // override if data is already at store or add data to store
+        if(res != null) {
+          sharedPref.remove(base);
+          sharedPref.save(base, response.body);
+        } else sharedPref.save(base, response.body);
+        
         convertDataToJson['rates'].forEach((final String key, final value) {
           _data.add({ 'currency': key, 'value': value });
         });
