@@ -6,15 +6,12 @@ import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 import '../repositories/currency_repository.dart';
 import '../logic/calculator.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BottomNavigationEvent extends Equatable {
   BottomNavigationEvent([List props = const []]) : super();
 }
 
 class AppStarted extends BottomNavigationEvent {
-  @override
-  String toString() => 'AppStarted';
 
   @override
   List<Object> get props => [];
@@ -27,9 +24,6 @@ class PageTapped extends BottomNavigationEvent {
 
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() => 'PageTapped: $index';
 }
 
 class GetData extends BottomNavigationEvent {
@@ -57,22 +51,16 @@ abstract class BottomNavigationState extends Equatable {
 
 class CurrentIndexChanged extends BottomNavigationState {
   final int currentIndex;
-
   CurrentIndexChanged({@required this.currentIndex}) : super([currentIndex]);
 
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() => 'CurrentIndexChanged to $currentIndex';
 }
 
 class PageLoading extends BottomNavigationState {
 
   @override
   List<Object> get props => [];
-  @override
-  String toString() => 'PageLoading';
 }
 
 class FirstPageLoaded extends BottomNavigationState {
@@ -156,17 +144,16 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
 
       List fetchedData = await _getCurrencyData(base);
       List sharedData = await _getCurrencySharedData(base);
-      // print(fetchedData);
-      List dataToDisplay = fetchedData.length != 0 ? sharedData : fetchedData;
-
+      
+      List dataToDisplay = fetchedData.length == 0 ? sharedData : fetchedData;
       if (event.amount != null && event.amount > 0) {
-        status = fetchedData.length != 0 ? Status.newData : sharedData != null ? Status.oldData : Status.noData;
+        status = fetchedData.length != 0 ? Status.newData : sharedData.length != 0 ? Status.oldData : Status.noData;
 
         _data = [];
         double result = 0;
         if( dataToDisplay != null ) {
           dataToDisplay.forEach((rate) =>  _data.add( {'currency': rate['currency'], 'value': calc.currencyValue(event.amount, rate['value'])} ));
-        
+          
           var targetCurrency = data.length > 0 ? data.firstWhere((rate) => rate['currency'] == target ) : sharedData.length > 0 ? sharedData.firstWhere((rate) => rate['currency'] == target ) : 0; 
           result = targetCurrency != 0 ? targetCurrency['value'] : 0.0;
         }
