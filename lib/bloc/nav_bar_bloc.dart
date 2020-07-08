@@ -8,7 +8,7 @@ import '../repositories/currency_repository.dart';
 import '../logic/calculator.dart';
 
 abstract class BottomNavigationEvent extends Equatable {
-  BottomNavigationEvent([List props = const []]) : super();
+  BottomNavigationEvent([List props = const []]);
 }
 
 class AppStarted extends BottomNavigationEvent {
@@ -20,7 +20,7 @@ class AppStarted extends BottomNavigationEvent {
 class PageTapped extends BottomNavigationEvent {
   final int index;
 
-  PageTapped({@required this.index}) : super([index]);
+  PageTapped({@required this.index});
 
   @override
   List<Object> get props => [];
@@ -46,12 +46,12 @@ class ChangeCurrency extends BottomNavigationEvent {
 
 @immutable
 abstract class BottomNavigationState extends Equatable {
-  BottomNavigationState([List props = const []]) : super();
+  BottomNavigationState([List props = const []]);
 }
 
 class CurrentIndexChanged extends BottomNavigationState {
   final int currentIndex;
-  CurrentIndexChanged({@required this.currentIndex}) : super([currentIndex]);
+  CurrentIndexChanged({this.currentIndex});
 
   @override
   List<Object> get props => [];
@@ -144,9 +144,9 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
 
       List fetchedData = await _getCurrencyData(base);
       List sharedData = await _getCurrencySharedData(base);
-      
+      print(fetchedData);
       List dataToDisplay = fetchedData.length == 0 ? sharedData : fetchedData;
-      
+
       if (event.amount != null && event.amount > 0) {
         status = fetchedData.length != 0 ? Status.newData : sharedData.length != 0 ? Status.oldData : Status.noData;
 
@@ -176,20 +176,14 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
   }
 
   Future<List> _getCurrencyData(base) async {
-
-    List data;
     await currencyRepository.fetchData(base);
-    data = currencyRepository.data;
-    return data;
-
+    return currencyRepository.data;
   }
 
   Future<List> _getCurrencySharedData(base) async {
-
-    List sharedData;
     await currencyRepository.showData(base);
-    sharedData = currencyRepository.sharedData;
-    return sharedData;
+    return currencyRepository.sharedData;
   }
+  
 }
 
