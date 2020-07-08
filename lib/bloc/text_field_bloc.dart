@@ -1,7 +1,7 @@
 import 'dart:async';
 
 class TextBloc {
-  var _textController = StreamController<String>();
+  var _textController = StreamController<String>.broadcast();
   Stream<String> get textStream => _textController.stream;
 
 

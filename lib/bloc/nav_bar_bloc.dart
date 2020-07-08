@@ -146,7 +146,7 @@ class BottomNavigationBloc extends Bloc<BottomNavigationEvent, BottomNavigationS
 
       List fetchedData = await _getCurrencyData(base);
       List sharedData = await _getCurrencySharedData(base);
-      print(fetchedData);
+
       List dataToDisplay = fetchedData.length == 0 ? sharedData : fetchedData;
 
       if (event.amount != null && event.amount > 0) {

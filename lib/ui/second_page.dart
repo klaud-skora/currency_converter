@@ -26,7 +26,6 @@ class SecondPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Color textColor = Color(0xff6b6b83);
     Color themeColor = Color(0xff3b8d99);
-    double amount = 0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -60,7 +59,6 @@ class SecondPage extends StatelessWidget {
                               return TextField(
                                 onChanged: (String text) {
                                   _textBloc.updateText(text);
-                                  amount = parser(text);
                                 },
                                 decoration: InputDecoration(hintText: 'Amount'),
                               );
@@ -89,15 +87,20 @@ class SecondPage extends StatelessWidget {
                   child: Text(  '${BlocProvider.of<BottomNavigationBloc>(context).state.props[3]}', style: TextStyle( color: Colors.red)),
                 ),
                 SizedBox(height: 20.0),
-                RaisedButton(
-                  padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(width: 2.0, color: Color(0xffaa4b6b)),
-                  ),
-                  onPressed: () => BlocProvider.of<BottomNavigationBloc>(context).add(GetData(amount: amount)),
-                  child: Text('SHOW DATA', style: TextStyle( color: textColor, fontSize: 22.0)),
-                ),
+                StreamBuilder(
+                  stream: _textBloc.textStream,
+                  builder: (context, AsyncSnapshot<String> textSnap) {
+                    return RaisedButton(
+                      padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                        side: BorderSide(width: 2.0, color: Color(0xffaa4b6b)),
+                      ),
+                      onPressed: () => BlocProvider.of<BottomNavigationBloc>(context).add(GetData(amount: parser(textSnap.data))),
+                      child: Text('SHOW DATA', style: TextStyle( color: textColor, fontSize: 22.0)),
+                    );
+                  }
+                ),  
                 SizedBox(height: 20.0),
                 BlocProvider.of<BottomNavigationBloc>(context).data.length != 0 && BlocProvider.of<BottomNavigationBloc>(context).state.props[1] != null ? ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
