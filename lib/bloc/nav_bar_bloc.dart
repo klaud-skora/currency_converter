@@ -6,6 +6,8 @@ import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 import '../repositories/currency_repository.dart';
 import '../logic/calculator.dart';
+import '../ui/currency_extension.dart';
+import '../ui/error_extension.dart';
 
 abstract class BottomNavigationEvent extends Equatable {
   BottomNavigationEvent([List props = const []]);

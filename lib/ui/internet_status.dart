@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/currency.dart';
+import './status_extension.dart';
 
 class InternetStatus extends StatelessWidget {
   final Status status;
